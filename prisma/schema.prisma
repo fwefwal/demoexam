@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  login     String   @unique
+  fullname  String
+  password  String
+  phone     String
+  email     String
+  role      String   @default("user")
+  createdAt DateTime @default(now())
+  entries   Entry[]
+  reviews   Review[]
+}
+
+model Todo {
+  id        Int      @id @default(autoincrement())
+  title     String
+  createdAt DateTime @default(now())
+}
+
+model Entry {
+  id          Int      @id @default(autoincrement())
+  course      String
+  paymentType String
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  startAt     DateTime
+  status      String?  @default("Новая")
+  createdAt   DateTime @default(now())
+  reviews     Review[]
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  text      String
+  rating    Int      @default(5)
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  entryId   Int
+  entry     Entry    @relation(fields: [entryId], references: [id])
+  createdAt DateTime @default(now())
+}
